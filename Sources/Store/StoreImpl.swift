@@ -18,8 +18,7 @@ final class StoreImpl: Store {
     private var productInfos = [StoreProduct: StoreProductInfo]()
     private var storeKitProducts = [StoreProduct: StoreKit.Product]()
 
-    private let stateValueSubject = CurrentValueSubject<SubscriptionState, Never>(.unknown)
-    private let eventPassthroughSubject = PassthroughSubject<StoreEvent, Never>()
+    private let eventPassthroughSubject = ValuePassthroughSubject<StoreEvent>()
 
     private var transactionListeningHandle: Task<Void, Error>?
 
@@ -145,20 +144,10 @@ final class StoreImpl: Store {
 
     // MARK: - Store
 
+    lazy var subscriptionStateSubject: ValueSubject<SubscriptionState> = MutableValueSubject<SubscriptionState>(.unknown)
+
     var eventPublisher: ValuePublisher<StoreEvent> {
-        eventPassthroughSubject
-            .eraseToAnyPublisher()
-    }
-
-    var subscriptionStatePublisher: ValuePublisher<SubscriptionState> {
-        stateValueSubject
-            .removeDuplicates()
-            .eraseToAnyPublisher()
-    }
-
-    var subscriptionState: SubscriptionState {
-        stateValueSubject
-            .value
+        eventPassthroughSubject.eraseToAnyPublisher()
     }
 
     func purchase(_ product: StoreProduct) async throws {
@@ -190,15 +179,7 @@ final class StoreImpl: Store {
         try await updatePurchaseState()
     }
 
-    func info(for product: StoreProduct) -> StoreProductInfo {
-        StoreProductInfo(
-            value: 0,
-            duration: .week,
-            locale: .current
-        )
-    }
-
-    func localizedInfo(for product: StoreProduct) -> StoreProductInfo {
+    func info(for product: StoreProduct, localized: Bool) -> StoreProductInfo {
         StoreProductInfo(
             value: 0,
             duration: .week,
