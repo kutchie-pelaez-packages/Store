@@ -8,8 +8,18 @@ let package = Package(
         .iOS("15")
     ],
     products: [
-        .library(name: "Store", targets: ["Store"]),
-        .library(name: "SubscriptionState", targets: ["SubscriptionState"])
+        .library(
+            name: "Store",
+            targets: [
+                "Store"
+            ]
+        ),
+        .library(
+            name: "SubscriptionState",
+            targets: [
+                "SubscriptionState"
+            ]
+        )
     ],
     dependencies: [
         .package(name: "Core", url: "https://github.com/kutchie-pelaez-packages/Core.git", .branch("master"))
