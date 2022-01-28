@@ -1,5 +1,5 @@
 import Combine
-import CoreUtils
+import Core
 import StoreKit
 import SubscriptionState
 import os
