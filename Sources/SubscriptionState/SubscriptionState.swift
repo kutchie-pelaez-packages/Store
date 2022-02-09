@@ -1,10 +1,4 @@
-public enum SubscriptionState:
-    String,
-    CaseIterable,
-    CustomStringConvertible,
-    Equatable
-{
-
+public enum SubscriptionState: String, CaseIterable, CustomStringConvertible, Equatable {
     case unknown
     case subscribed
     case notSubscribed

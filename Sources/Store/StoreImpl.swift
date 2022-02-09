@@ -1,11 +1,12 @@
 import Combine
 import Core
+import Logger
 import StoreKit
 import SubscriptionState
-import os
 
 final class StoreImpl: Store {
-    init() {
+    init(logger: Logger) {
+        self.logger = logger
 //        initiallyUpdateSubscriptionState()
 //        initiallyLoadProducts()
 //        startListeningForTransactions()
@@ -14,6 +15,8 @@ final class StoreImpl: Store {
     deinit {
         transactionListeningHandle?.cancel()
     }
+
+    private let logger: Logger
 
     private var productInfos = [StoreProduct: StoreProductInfo]()
     private var storeKitProducts = [StoreProduct: StoreKit.Product]()
@@ -186,4 +189,8 @@ final class StoreImpl: Store {
             locale: .current
         )
     }
+}
+
+extension LogDomain {
+    fileprivate static let store: Self = "store"
 }
