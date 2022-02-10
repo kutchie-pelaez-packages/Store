@@ -5,10 +5,15 @@ import StoreKit
 import SubscriptionStatus
 
 final class StoreImpl: Store {
-    init(logger: Logger) {
+    init(
+        products: [StoreProduct],
+        logger: Logger
+    ) {
+        self.products = products
         self.logger = logger
     }
 
+    private let products: [StoreProduct]
     private let logger: Logger
 
     private let eventPassthroughSubject = ValuePassthroughSubject<StoreEvent>()
