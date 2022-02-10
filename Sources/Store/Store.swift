@@ -1,10 +1,19 @@
 import Core
-import SubscriptionState
+import SubscriptionStatus
 
 public protocol Store {
-    var subscriptionStateSubject: ValueSubject<SubscriptionState> { get }
+    var subscriptionStateSubject: ValueSubject<SubscriptionStatus> { get }
     var eventPublisher: ValuePublisher<StoreEvent> { get }
     func purchase(_ product: StoreProduct) async throws
     func restore() async throws
     func info(for product: StoreProduct, localized: Bool) -> StoreProductInfo
+}
+
+extension Store {
+    func info(for product: StoreProduct) -> StoreProductInfo {
+        info(
+            for: product,
+            localized: true
+        )
+    }
 }

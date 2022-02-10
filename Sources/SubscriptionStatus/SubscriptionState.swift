@@ -1,9 +1,9 @@
-public enum SubscriptionState: CaseIterable, CustomStringConvertible, Equatable {
+public enum SubscriptionStatus: CaseIterable, CustomStringConvertible, Equatable {
     case unknown
     case subscribed
     case notSubscribed(wasSubscribed: Bool)
 
-    public static var allCases: [SubscriptionState] {
+    public static var allCases: [SubscriptionStatus] {
         [
             .unknown,
             .subscribed,
