@@ -236,7 +236,7 @@ final class StoreImpl: Store {
             throw StoreError.userCancelledPurchase
 
         case .pending:
-            logger.log("Pending \(subscription.id) subscription purchased", domain: .store)
+            logger.log("Pending \(subscription.id) subscription purchasing", domain: .store)
 
         @unknown default:
             throw StoreError.unknownPurchaseResult
