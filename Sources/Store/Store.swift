@@ -6,14 +6,5 @@ public protocol Store {
     var eventPublisher: ValuePublisher<StoreEvent> { get }
     func purchase(_ product: StoreProduct) async throws
     func restore() async throws
-    func info(for product: StoreProduct, localized: Bool) -> StoreProductInfo
-}
-
-extension Store {
-    func info(for product: StoreProduct) -> StoreProductInfo {
-        info(
-            for: product,
-            localized: true
-        )
-    }
+    func info(for product: StoreProduct) -> StoreProductInfo
 }
