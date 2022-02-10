@@ -14,7 +14,7 @@ final class Application: UIApplication, UIApplicationDelegate, LoggerProvider {
 
     private lazy var store: Store = {
         StoreFactory().produce(
-            products: ClientSubscription.allCases,
+            subscriptions: ClientSubscription.allCases,
             logger: logger
         )
     }()

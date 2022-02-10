@@ -4,11 +4,11 @@ public struct StoreFactory {
     public init() { }
     
     public func produce(
-        products: [StoreProduct],
+        subscriptions: [StoreSubscription],
         logger: Logger
     ) -> Store {
         StoreImpl(
-            products: products,
+            subscriptions: subscriptions,
             logger: logger
         )
     }

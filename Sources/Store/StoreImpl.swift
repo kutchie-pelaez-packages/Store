@@ -6,10 +6,10 @@ import SubscriptionStatus
 
 final class StoreImpl: Store {
     init(
-        products: [StoreProduct],
+        subscriptions: [StoreSubscription],
         logger: Logger
     ) {
-        self.products = products
+        self.subscriptions = subscriptions
         self.logger = logger
         setup()
     }
@@ -19,7 +19,7 @@ final class StoreImpl: Store {
         unfinishedTransactionsListener = nil
     }
 
-    private let products: [StoreProduct]
+    private let subscriptions: [StoreSubscription]
     private let logger: Logger
 
     private var unfinishedTransactionsListener: Task<Void, Error>?
@@ -60,7 +60,7 @@ final class StoreImpl: Store {
     }
 
     private func retreiveStoreProducts() async throws {
-        let storeProducts = try await Product.products(for: products.map(\.id))
+        let storeProducts = try await Product.products(for: subscriptions.map(\.id))
 
         for storeProduct in storeProducts {
             switch storeProduct.type {
@@ -81,7 +81,7 @@ final class StoreImpl: Store {
         self.storeProducts = storeProducts
     }
 
-    private func duration(from subscriptionPeriod: Product.SubscriptionPeriod?) -> StoreProductDuration {
+    private func duration(from subscriptionPeriod: Product.SubscriptionPeriod?) -> StoreProductInfo.Duration {
         guard let subscriptionPeriod = subscriptionPeriod else {
             logger.error("Subscription period is nil", domain: .store)
             crash()
@@ -131,9 +131,9 @@ final class StoreImpl: Store {
         eventPassthroughSubject.eraseToAnyPublisher()
     }
 
-    func purchase(_ product: StoreProduct) async throws {
-        guard let storeProduct = storeProducts.first(where: { $0.id == product.id }) else {
-            logger.log("Unknown product \(product.id) received", domain: .store)
+    func subscribe(for subscription: StoreSubscription) async throws {
+        guard let storeProduct = storeProducts.first(where: { $0.id == subscription.id }) else {
+            logger.log("Unknown subscription \(subscription.id) received", domain: .store)
             safeCrash()
             throw StoreError.unknownProduct
         }
@@ -150,7 +150,7 @@ final class StoreImpl: Store {
             throw StoreError.userCancelledPurchase
 
         case .pending:
-            logger.log("Pending \(product.id) product purchase", domain: .store)
+            logger.log("Pending \(subscription.id) subscription purchased", domain: .store)
 
         @unknown default:
             throw StoreError.unknownPurchaseResult
@@ -161,7 +161,7 @@ final class StoreImpl: Store {
         fatalError()
     }
 
-    func info(for product: StoreProduct) -> StoreProductInfo {
+    func info(for subscription: StoreSubscription) -> StoreProductInfo {
         fatalError()
     }
 }
