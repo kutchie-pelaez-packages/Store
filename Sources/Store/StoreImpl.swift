@@ -32,9 +32,12 @@ final class StoreImpl: Store {
 
     private func setup() {
         listenForUnfinishedTransaction()
+
         Task {
             do {
-                try await retreiveProductsFromStore()
+                try await retreiveStoreProducts()
+            } catch {
+                logger.error("Failed to retreive store products", domain: .store)
             }
         }
     }
@@ -47,7 +50,7 @@ final class StoreImpl: Store {
                     // TODO: - update subscription state
                     await transaction.finish()
                 } catch {
-                    self.logger.log(
+                    self.logger.error(
                         "Failed to verefy transaction for \(unfinishedTransaction) transaction",
                         domain: .store
                     )
@@ -56,7 +59,7 @@ final class StoreImpl: Store {
         }
     }
 
-    private func retreiveProductsFromStore() async throws {
+    private func retreiveStoreProducts() async throws {
         let storeProducts = try await Product.products(for: products.map(\.id))
 
         for storeProduct in storeProducts {
@@ -70,7 +73,8 @@ final class StoreImpl: Store {
                 )
 
             default:
-                safeCrash("\(storeProduct.type) product type is not supported")
+                logger.log("\(storeProduct.type) product type is not supported", domain: .store)
+                safeCrash()
             }
         }
 
@@ -78,14 +82,18 @@ final class StoreImpl: Store {
     }
 
     private func duration(from subscriptionPeriod: Product.SubscriptionPeriod?) -> StoreProductDuration {
-        guard let subscriptionPeriod = subscriptionPeriod else { crash() }
+        guard let subscriptionPeriod = subscriptionPeriod else {
+            logger.error("Subscription period is nil", domain: .store)
+            crash()
+        }
 
         switch subscriptionPeriod.unit {
         case .week:
             if subscriptionPeriod.value == 1 {
                 return .week
             } else {
-                crash("\(subscriptionPeriod.value) weeks duration is not supported")
+                logger.error("\(subscriptionPeriod.value) weeks duration is not supported", domain: .store)
+                crash()
             }
 
         case .month:
@@ -95,11 +103,13 @@ final class StoreImpl: Store {
             if subscriptionPeriod.value == 1 {
                 return .year
             } else {
-                crash("\(subscriptionPeriod.value) years duration is not supported")
+                logger.error("\(subscriptionPeriod.value) years duration is not supported", domain: .store)
+                crash()
             }
 
         default:
-            crash("\(subscriptionPeriod.unit) unit is not supported")
+            logger.error("\(subscriptionPeriod.unit) unit is not supported", domain: .store)
+            crash()
         }
     }
 
@@ -123,7 +133,8 @@ final class StoreImpl: Store {
 
     func purchase(_ product: StoreProduct) async throws {
         guard let storeProduct = storeProducts.first(where: { $0.id == product.id }) else {
-            safeCrash("Unknown product \(product.id) received")
+            logger.log("Unknown product \(product.id) received", domain: .store)
+            safeCrash()
             throw StoreError.unknownProduct
         }
 
