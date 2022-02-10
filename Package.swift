@@ -15,9 +15,9 @@ let package = Package(
             ]
         ),
         .library(
-            name: "SubscriptionStatus",
+            name: "Subscription",
             targets: [
-                "SubscriptionStatus"
+                "Subscription"
             ]
         )
     ],
@@ -31,9 +31,9 @@ let package = Package(
             dependencies: [
                 .product(name: "Core", package: "Core"),
                 .product(name: "Logger", package: "Logging"),
-                .target(name: "SubscriptionStatus")
+                .target(name: "Subscription")
             ]
         ),
-        .target(name: "SubscriptionStatus")
+        .target(name: "Subscription")
     ]
 )

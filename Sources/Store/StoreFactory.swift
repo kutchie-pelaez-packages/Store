@@ -1,10 +1,11 @@
 import Logger
+import Subscription
 
 public struct StoreFactory {
     public init() { }
     
     public func produce(
-        subscriptions: [StoreSubscription],
+        subscriptions: [SubscriptionProduct],
         logger: Logger
     ) -> Store {
         StoreImpl(

@@ -2,11 +2,11 @@ import Combine
 import Core
 import Logger
 import StoreKit
-import SubscriptionStatus
+import Subscription
 
 final class StoreImpl: Store {
     init(
-        subscriptions: [StoreSubscription],
+        subscriptions: [SubscriptionProduct],
         logger: Logger
     ) {
         self.subscriptions = subscriptions
@@ -19,14 +19,14 @@ final class StoreImpl: Store {
         unfinishedTransactionsListener = nil
     }
 
-    private let subscriptions: [StoreSubscription]
+    private let subscriptions: [SubscriptionProduct]
     private let logger: Logger
 
     private var unfinishedTransactionsListener: Task<Void, Error>?
 
     private let eventPassthroughSubject = ValuePassthroughSubject<StoreEvent>()
     private var storeProducts = [Product]()
-    private var productIdToInfo = [String: StoreSubscriptionInfo]()
+    private var productIdToInfo = [String: SubscriptionInfo]()
 
     // MARK: -
 
@@ -65,7 +65,7 @@ final class StoreImpl: Store {
         for storeProduct in storeProducts {
             switch storeProduct.type {
             case .autoRenewable:
-                productIdToInfo[storeProduct.id] = StoreSubscriptionInfo(
+                productIdToInfo[storeProduct.id] = SubscriptionInfo(
                     price: storeProduct.price,
                     duration: duration(
                         from: storeProduct.subscription?.subscriptionPeriod
@@ -81,7 +81,7 @@ final class StoreImpl: Store {
         self.storeProducts = storeProducts
     }
 
-    private func duration(from subscriptionPeriod: Product.SubscriptionPeriod?) -> StoreSubscriptionInfo.Duration {
+    private func duration(from subscriptionPeriod: Product.SubscriptionPeriod?) -> SubscriptionInfo.Duration {
         guard let subscriptionPeriod = subscriptionPeriod else {
             logger.error("Subscription period is nil", domain: .store)
             crash()
@@ -130,13 +130,17 @@ final class StoreImpl: Store {
 
     // MARK: - Store
 
-    lazy var subscriptionStatusSubject: ValueSubject<SubscriptionStatus> = MutableValueSubject(.unknown)
+    lazy var subscriptionStatusSubject: ValueSubject<SubscriptionStatus> = MutableValueSubject(
+        .notSubscribed(
+            wasSubscribed: false
+        )
+    )
 
     var eventPublisher: ValuePublisher<StoreEvent> {
         eventPassthroughSubject.eraseToAnyPublisher()
     }
 
-    func subscribe(for subscription: StoreSubscription) async throws {
+    func subscribe(for subscription: SubscriptionProduct) async throws {
         guard let storeProduct = storeProducts.first(where: { $0.id == subscription.id }) else {
             logger.log("Unknown subscription \(subscription.id) received", domain: .store)
             safeCrash()
@@ -166,7 +170,7 @@ final class StoreImpl: Store {
         fatalError()
     }
 
-    func info(for subscription: StoreSubscription) -> StoreSubscriptionInfo {
+    func info(for subscription: SubscriptionProduct) -> SubscriptionInfo {
         fatalError()
     }
 }

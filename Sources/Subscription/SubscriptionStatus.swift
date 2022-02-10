@@ -1,11 +1,9 @@
 public enum SubscriptionStatus: CaseIterable, CustomStringConvertible, Equatable {
-    case unknown
     case subscribed
     case notSubscribed(wasSubscribed: Bool)
 
     public static var allCases: [SubscriptionStatus] {
         [
-            .unknown,
             .subscribed,
             .notSubscribed(wasSubscribed: false),
             .notSubscribed(wasSubscribed: true)
@@ -24,9 +22,6 @@ public enum SubscriptionStatus: CaseIterable, CustomStringConvertible, Equatable
 
     public var description: String {
         switch self {
-        case .unknown:
-            return "unknown"
-
         case .subscribed:
             return "subscribed"
 
