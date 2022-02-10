@@ -1,26 +1,39 @@
 import Core
+import Foundation
+import Yams
 
 @propertyWrapper
 public struct SubscriptionStatusUserDefault {
     public init(_ key: String) {
         self._subscriptionStatus = UserDefault(
             key,
-            default: SubscriptionStatus.notSubscribed(wasSubscribed: false).description
+            default: nil
         )
     }
 
     @UserDefault
-    private var subscriptionStatus: String
+    private var subscriptionStatus: Data?
+
+    private let decoder = YAMLDecoder()
+    private let encoder = YAMLEncoder()
 
     public var wrappedValue: SubscriptionStatus {
         get {
-            guard let status = SubscriptionStatus(from: subscriptionStatus) else {
-                return .notSubscribed(wasSubscribed: false)
+            if
+                let userDefaultsSubscriptionStatus = subscriptionStatus,
+                let subscriptionStatus: SubscriptionStatus = try? decoder.decode(from: userDefaultsSubscriptionStatus)
+            {
+                return subscriptionStatus
+            } else {
+                return .notSubscribed
             }
-
-            return status
         } set {
-            subscriptionStatus = newValue.description
+            do {
+                let data = try encoder.encode(newValue).utf8Data
+                subscriptionStatus = data
+            } catch {
+                safeCrash()
+            }
         }
     }
 }

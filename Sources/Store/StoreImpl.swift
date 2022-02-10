@@ -25,11 +25,13 @@ final class StoreImpl: Store {
 
     @SubscriptionStatusUserDefault("subscription_status")
     private var storedSubscriptionStatus
-    private lazy var _subscriptionStatusSubject = MutableValueSubject<SubscriptionStatus>(storedSubscriptionStatus)
+    private lazy var _subscriptionStatusSubject = MutableValueSubject<SubscriptionStatus>(
+        storedSubscriptionStatus
+    )
 
     private let eventPassthroughSubject = ValuePassthroughSubject<StoreEvent>()
     private var storeProducts = [Product]()
-    private var productIdToInfo = [String: SubscriptionInfo]()
+    private var subscriptionIdToInfo = [String: SubscriptionInfo]()
 
     // MARK: -
 
@@ -69,7 +71,7 @@ final class StoreImpl: Store {
         for storeProduct in storeProducts {
             switch storeProduct.type {
             case .autoRenewable:
-                productIdToInfo[storeProduct.id] = SubscriptionInfo(
+                subscriptionIdToInfo[storeProduct.id] = SubscriptionInfo(
                     price: storeProduct.price,
                     duration: duration(
                         from: storeProduct.subscription?.subscriptionPeriod
@@ -93,20 +95,79 @@ final class StoreImpl: Store {
             return
         }
 
-        var subscriptionStatus: SubscriptionStatus = .notSubscribed(wasSubscribed: false)
+        var subscriptionStatus: SubscriptionStatus = .notSubscribed
         defer {
             _subscriptionStatusSubject.value = subscriptionStatus
             storedSubscriptionStatus = subscriptionStatus
         }
 
+        var expiredSubscriptions = [SubscriptionStatus.ExpiredInfo.ExpiredSubscription]()
+
         for status in statuses {
+            let renewalInfo = try verefied(status.renewalInfo)
+
             switch status.state {
             case .revoked, .expired:
-                subscriptionStatus = .notSubscribed(wasSubscribed: true)
+                let reason: SubscriptionStatus.ExpiredInfo.ExpiredSubscription.Reason
+                if status.state == .revoked {
+                    reason = .revoked
+                } else if let expirationReason = renewalInfo.expirationReason {
+                    switch expirationReason {
+                    case .autoRenewDisabled:
+                        reason = .didNotAutoRenew
+
+                    case .billingError:
+                        reason = .billingError
+
+                    case .didNotConsentToPriceIncrease:
+                        reason = .didNotConsentToPriceIncrease
+
+                    case .productUnavailable:
+                        reason = .productUnavailable
+
+                    default:
+                        reason = .unknown
+                    }
+                } else {
+                    reason = .unknown
+                }
+
+                expiredSubscriptions.append(
+                    SubscriptionStatus.ExpiredInfo.ExpiredSubscription(
+                        id: renewalInfo.currentProductID,
+                        reason: reason
+                    )
+                )
+
+                subscriptionStatus = .expired(
+                    SubscriptionStatus.ExpiredInfo(
+                        expiredSubscriptions: expiredSubscriptions
+                    )
+                )
 
             case .subscribed, .inBillingRetryPeriod, .inGracePeriod:
-                let _ = try verefied(status.renewalInfo)
-                subscriptionStatus = .subscribed
+                let autoRenew: SubscriptionStatus.SubscribedInfo.AutoRenew
+                if renewalInfo.willAutoRenew {
+                    autoRenew = .enabled
+                } else if let expirationReason = renewalInfo.expirationReason {
+                    switch expirationReason {
+                    case .autoRenewDisabled:
+                        autoRenew = .disabled
+
+                    default:
+                        autoRenew = .failed
+                    }
+                } else {
+                    autoRenew = .failed
+                }
+
+                subscriptionStatus = .subscribed(
+                    SubscriptionStatus.SubscribedInfo(
+                        id: renewalInfo.currentProductID,
+                        autoRenew: autoRenew
+                    )
+                )
+                return
 
             default:
                 continue

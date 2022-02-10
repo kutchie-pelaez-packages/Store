@@ -1,23 +1,55 @@
-public enum SubscriptionStatus: CaseIterable, CustomStringConvertible, Equatable {
-    case subscribed
-    case notSubscribed(wasSubscribed: Bool)
+public enum SubscriptionStatus: CustomStringConvertible, Codable {
+    case subscribed(SubscribedInfo)
+    case notSubscribed
+    case expired(ExpiredInfo)
 
-    public init?(from string: String) {
-        for status in Self.allCases {
-            if status.description == string {
-                self = status
-            }
+    public struct SubscribedInfo: Codable {
+        public init(
+            id: String,
+            autoRenew: AutoRenew
+        ) {
+            self.id = id
+            self.autoRenew = autoRenew
         }
 
-        return nil
+        public let id: String
+        public let autoRenew: AutoRenew
+
+        public enum AutoRenew: Codable {
+            case enabled
+            case disabled
+            case failed
+        }
     }
 
-    public static var allCases: [SubscriptionStatus] {
-        [
-            .subscribed,
-            .notSubscribed(wasSubscribed: false),
-            .notSubscribed(wasSubscribed: true)
-        ]
+    public struct ExpiredInfo: Codable {
+        public init(expiredSubscriptions: [ExpiredSubscription]) {
+            self.expiredSubscriptions = expiredSubscriptions
+        }
+
+        public let expiredSubscriptions: [ExpiredSubscription]
+
+        public struct ExpiredSubscription: Codable {
+            public init(
+                id: String,
+                reason: Reason
+            ) {
+                self.id = id
+                self.reason = reason
+            }
+
+            public let id: String
+            public let reason: Reason
+
+            public enum Reason: Codable {
+                case revoked
+                case didNotAutoRenew
+                case billingError
+                case didNotConsentToPriceIncrease
+                case productUnavailable
+                case unknown
+            }
+        }
     }
 
     public var isSubscribed: Bool {
@@ -35,12 +67,11 @@ public enum SubscriptionStatus: CaseIterable, CustomStringConvertible, Equatable
         case .subscribed:
             return "subscribed"
 
-        case let .notSubscribed(wasSubscribed):
-            if wasSubscribed {
-                return "expired"
-            } else {
-                return "notSubscribed"
-            }
+        case .notSubscribed:
+            return "notSubscribed"
+
+        case .expired:
+            return "expired"
         }
     }
 }
