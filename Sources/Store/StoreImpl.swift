@@ -16,13 +16,16 @@ final class StoreImpl: Store {
 
     deinit {
         unfinishedTransactionsListener?.cancel()
-        unfinishedTransactionsListener = nil
     }
 
     private let subscriptions: [SubscriptionProduct]
     private let logger: Logger
 
     private var unfinishedTransactionsListener: Task<Void, Error>?
+
+    @SubscriptionStatusUserDefault("subscription_status")
+    private var storedSubscriptionStatus
+    private lazy var _subscriptionStatusSubject = MutableValueSubject<SubscriptionStatus>(storedSubscriptionStatus)
 
     private let eventPassthroughSubject = ValuePassthroughSubject<StoreEvent>()
     private var storeProducts = [Product]()
@@ -31,23 +34,24 @@ final class StoreImpl: Store {
     // MARK: -
 
     private func setup() {
-        listenForUnfinishedTransaction()
+        setupUnfinishedTransactionsListener()
 
         Task {
             do {
                 try await retreiveStoreProducts()
+                try await syncSubscriptionStatus()
             } catch {
                 logger.error("Failed to retreive store products", domain: .store)
             }
         }
     }
 
-    private func listenForUnfinishedTransaction() {
+    private func setupUnfinishedTransactionsListener() {
         unfinishedTransactionsListener = Task.detached {
             for await unfinishedTransaction in Transaction.unfinished {
                 do {
-                    let transaction = try self.transaction(from: unfinishedTransaction)
-                    // TODO: - update subscription state
+                    let transaction = try self.verefied(unfinishedTransaction)
+                    try await self.syncSubscriptionStatus()
                     await transaction.finish()
                 } catch {
                     self.logger.error(
@@ -79,6 +83,45 @@ final class StoreImpl: Store {
         }
 
         self.storeProducts = storeProducts
+    }
+
+    private func syncSubscriptionStatus() async throws {
+        guard
+            let storeProduct = storeProducts.first,
+            let statuses = try await storeProduct.subscription?.status
+        else {
+            return
+        }
+
+        var subscriptionStatus: SubscriptionStatus = .notSubscribed(wasSubscribed: false)
+        defer {
+            _subscriptionStatusSubject.value = subscriptionStatus
+            storedSubscriptionStatus = subscriptionStatus
+        }
+
+        for status in statuses {
+            switch status.state {
+            case .revoked, .expired:
+                subscriptionStatus = .notSubscribed(wasSubscribed: true)
+
+            case .subscribed, .inBillingRetryPeriod, .inGracePeriod:
+                let _ = try verefied(status.renewalInfo)
+                subscriptionStatus = .subscribed
+
+            default:
+                continue
+            }
+        }
+    }
+
+    private func verefied<T>(_ verificationResult: VerificationResult<T>) throws -> T {
+        switch verificationResult {
+        case let .verified(transaction):
+            return transaction
+
+        case .unverified:
+            throw StoreError.unverifiedTransaction
+        }
     }
 
     private func duration(from subscriptionPeriod: Product.SubscriptionPeriod?) -> SubscriptionInfo.Duration {
@@ -118,23 +161,11 @@ final class StoreImpl: Store {
         }
     }
 
-    private func transaction<T>(from verificationResult: VerificationResult<T>) throws -> T {
-        switch verificationResult {
-        case let .verified(transaction):
-            return transaction
-
-        case .unverified:
-            throw StoreError.unverifiedTransaction
-        }
-    }
-
     // MARK: - Store
 
-    lazy var subscriptionStatusSubject: ValueSubject<SubscriptionStatus> = MutableValueSubject(
-        .notSubscribed(
-            wasSubscribed: false
-        )
-    )
+    var subscriptionStatusSubject: ValueSubject<SubscriptionStatus> {
+        _subscriptionStatusSubject
+    }
 
     var eventPublisher: ValuePublisher<StoreEvent> {
         eventPassthroughSubject.eraseToAnyPublisher()
@@ -151,8 +182,8 @@ final class StoreImpl: Store {
 
         switch purchaseResult {
         case let .success(verificationResult):
-            let transaction = try transaction(from: verificationResult)
-            // TODO: - update subscription state
+            let transaction = try verefied(verificationResult)
+            try await syncSubscriptionStatus()
             await transaction.finish()
 
         case .userCancelled:

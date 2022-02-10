@@ -2,6 +2,16 @@ public enum SubscriptionStatus: CaseIterable, CustomStringConvertible, Equatable
     case subscribed
     case notSubscribed(wasSubscribed: Bool)
 
+    public init?(from string: String) {
+        for status in Self.allCases {
+            if status.description == string {
+                self = status
+            }
+        }
+
+        return nil
+    }
+
     public static var allCases: [SubscriptionStatus] {
         [
             .subscribed,
