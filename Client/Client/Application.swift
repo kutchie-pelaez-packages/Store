@@ -2,7 +2,7 @@ import Logger
 import Store
 import UIKit
 
-final class Application: UIApplication, UIApplicationDelegate, LoggerProvider, StoreProvider {
+final class Application: UIApplication, UIApplicationDelegate, LoggerProvider {
     var window: UIWindow?
 
     private lazy var logger: Logger = {
@@ -15,7 +15,6 @@ final class Application: UIApplication, UIApplicationDelegate, LoggerProvider, S
     private lazy var store: Store = {
         StoreFactory().produce(
             subscriptions: ClientSubscription.allCases,
-            provider: self,
             logger: logger
         )
     }()
@@ -37,11 +36,5 @@ final class Application: UIApplication, UIApplicationDelegate, LoggerProvider, S
         window?.makeKeyAndVisible()
 
         return true
-    }
-
-    // MARK: - StoreProvider
-
-    var windowScene: UIWindowScene {
-        connectedScenes.randomElement() as! UIWindowScene
     }
 }

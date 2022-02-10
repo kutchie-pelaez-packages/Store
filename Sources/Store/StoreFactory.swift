@@ -6,12 +6,10 @@ public struct StoreFactory {
     
     public func produce(
         subscriptions: [SubscriptionProduct],
-        provider: StoreProvider,
         logger: Logger
     ) -> Store {
         StoreImpl(
             subscriptions: subscriptions,
-            provider: provider,
             logger: logger
         )
     }

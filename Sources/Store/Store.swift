@@ -6,7 +6,6 @@ public protocol Store {
     var eventPublisher: ValuePublisher<StoreEvent> { get }
     func subscribe(for subscription: SubscriptionProduct) async throws
     func restore() async throws
-    func manage() async throws
     func info(for subscription: SubscriptionProduct) -> SubscriptionInfo
 }
 

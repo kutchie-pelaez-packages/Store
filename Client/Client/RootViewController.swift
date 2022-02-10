@@ -131,28 +131,6 @@ final class RootViewController: ViewController {
                     header: System.TableView.SystemHeader(
                         text: "Status"
                     )
-                ),
-                System.TableView.Section(
-                    rows: [
-                        System.TableView.Row(
-                            content: System.TableView.SystemContent(
-                                title: System.TableView.SystemContent.Title(
-                                    text: "Manage",
-                                    color: System.Colors.Tint.primary,
-                                    alignment: .center
-                                )
-                            ),
-                            action: {
-                                Task { [weak self] in
-                                    do {
-                                        try await self?.store.manage()
-                                    } catch {
-
-                                    }
-                                }
-                            }
-                        )
-                    ]
                 )
             ]
         )

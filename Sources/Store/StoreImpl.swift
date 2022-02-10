@@ -7,25 +7,20 @@ import Subscription
 final class StoreImpl: Store {
     init(
         subscriptions: [SubscriptionProduct],
-        provider: StoreProvider,
         logger: Logger
     ) {
         self.subscriptions = subscriptions
-        self.provider = provider
         self.logger = logger
         setup()
     }
 
     deinit {
-        unfinishedTransactionsListener?.cancel()
         updatesTransactionsListener?.cancel()
     }
 
     private let subscriptions: [SubscriptionProduct]
-    private let provider: StoreProvider
     private let logger: Logger
 
-    private var unfinishedTransactionsListener: Task<Void, Error>?
     private var updatesTransactionsListener: Task<Void, Error>?
 
     @SubscriptionStatusUserDefault("subscription_status")
@@ -41,14 +36,7 @@ final class StoreImpl: Store {
     // MARK: -
 
     private func setup() {
-        setupTransactionsListener(
-            for: Transaction.unfinished,
-            assignTo: &unfinishedTransactionsListener
-        )
-        setupTransactionsListener(
-            for: Transaction.updates,
-            assignTo: &updatesTransactionsListener
-        )
+        setupTransactionsListener()
 
         Task {
             do {
@@ -63,19 +51,16 @@ final class StoreImpl: Store {
         }
     }
 
-    private func setupTransactionsListener(
-        for transactions: Transaction.Transactions,
-        assignTo listener: inout Task<Void, Error>?
-    ) {
-        listener = Task.detached {
-            for await transaction in transactions {
+    private func setupTransactionsListener() {
+        updatesTransactionsListener = Task.detached {
+            for await result in Transaction.updates {
                 do {
-                    let transaction = try self.verefied(transaction)
+                    let transaction = try self.verefied(result)
                     try await self.syncSubscriptionStatus()
                     await transaction.finish()
                 } catch {
                     self.logger.error(
-                        "Failed to verefy transaction for \(transaction) transaction",
+                        "Failed to verefy transaction for \(result) transaction",
                         domain: .store
                     )
                 }
@@ -267,10 +252,6 @@ final class StoreImpl: Store {
     func restore() async throws {
         try await AppStore.sync()
         try await syncSubscriptionStatus()
-    }
-
-    func manage() async throws {
-        try await AppStore.showManageSubscriptions(in: provider.windowScene)
     }
 
     func info(for subscription: SubscriptionProduct) -> SubscriptionInfo {
