@@ -44,6 +44,7 @@ final class StoreImpl: Store {
             for await unfinishedTransaction in Transaction.unfinished {
                 do {
                     let transaction = try self.transaction(from: unfinishedTransaction)
+                    // TODO: - update subscription state
                     await transaction.finish()
                 } catch {
                     self.logger.log(
@@ -131,13 +132,14 @@ final class StoreImpl: Store {
         switch purchaseResult {
         case let .success(verificationResult):
             let transaction = try transaction(from: verificationResult)
+            // TODO: - update subscription state
             await transaction.finish()
 
         case .userCancelled:
             throw StoreError.userCancelledPurchase
 
         case .pending:
-            throw StoreError.pendingPurchase
+            logger.log("Pending \(product.id) product purchase", domain: .store)
 
         @unknown default:
             throw StoreError.unknownPurchaseResult
