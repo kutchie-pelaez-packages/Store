@@ -3,7 +3,7 @@ import Foundation
 public struct StoreSubscriptionInfo {
     public enum Duration {
         case week
-        case months(amount: Int)
+        case month
         case year
     }
 

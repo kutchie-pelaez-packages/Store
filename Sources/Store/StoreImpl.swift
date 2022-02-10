@@ -97,7 +97,12 @@ final class StoreImpl: Store {
             }
 
         case .month:
-            return .months(amount: subscriptionPeriod.value)
+            if subscriptionPeriod.value == 1 {
+                return .month
+            } else {
+                logger.error("\(subscriptionPeriod.value) months duration is not supported", domain: .store)
+                crash()
+            }
 
         case .year:
             if subscriptionPeriod.value == 1 {
