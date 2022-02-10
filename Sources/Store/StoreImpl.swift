@@ -249,7 +249,7 @@ final class StoreImpl: Store {
     }
 
     func info(for subscription: SubscriptionProduct) -> SubscriptionInfo {
-        fatalError()
+        subscriptionIdToInfo[subscription.id] ?? subscription.fallbackInfo
     }
 }
 
