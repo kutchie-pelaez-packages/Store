@@ -1,9 +1,9 @@
-public enum StoreProduct: String, CaseIterable, CustomStringConvertible {
-    case wip
+public protocol StoreProduct {
+    var id: String { get }
+}
 
-    // MARK: - CustomStringConvertible
-
-    public var description: String {
-        ""
+extension StoreProduct where Self: RawRepresentable, RawValue == String {
+    public var id: String {
+        rawValue
     }
 }
