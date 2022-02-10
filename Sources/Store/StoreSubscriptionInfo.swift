@@ -1,6 +1,6 @@
 import Foundation
 
-public struct StoreProductInfo {
+public struct StoreSubscriptionInfo {
     public enum Duration {
         case week
         case months(amount: Int)

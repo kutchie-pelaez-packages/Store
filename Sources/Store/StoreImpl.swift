@@ -26,7 +26,7 @@ final class StoreImpl: Store {
 
     private let eventPassthroughSubject = ValuePassthroughSubject<StoreEvent>()
     private var storeProducts = [Product]()
-    private var productIdToInfo = [String: StoreProductInfo]()
+    private var productIdToInfo = [String: StoreSubscriptionInfo]()
 
     // MARK: -
 
@@ -65,7 +65,7 @@ final class StoreImpl: Store {
         for storeProduct in storeProducts {
             switch storeProduct.type {
             case .autoRenewable:
-                productIdToInfo[storeProduct.id] = StoreProductInfo(
+                productIdToInfo[storeProduct.id] = StoreSubscriptionInfo(
                     price: storeProduct.price,
                     duration: duration(
                         from: storeProduct.subscription?.subscriptionPeriod
@@ -81,7 +81,7 @@ final class StoreImpl: Store {
         self.storeProducts = storeProducts
     }
 
-    private func duration(from subscriptionPeriod: Product.SubscriptionPeriod?) -> StoreProductInfo.Duration {
+    private func duration(from subscriptionPeriod: Product.SubscriptionPeriod?) -> StoreSubscriptionInfo.Duration {
         guard let subscriptionPeriod = subscriptionPeriod else {
             logger.error("Subscription period is nil", domain: .store)
             crash()
@@ -161,7 +161,7 @@ final class StoreImpl: Store {
         fatalError()
     }
 
-    func info(for subscription: StoreSubscription) -> StoreProductInfo {
+    func info(for subscription: StoreSubscription) -> StoreSubscriptionInfo {
         fatalError()
     }
 }
