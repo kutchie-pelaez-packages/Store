@@ -116,7 +116,7 @@ final class StoreImpl: Store {
             throw StoreError.pendingPurchase
 
         @unknown default:
-            throw StoreError.unknown
+            throw StoreError.unknownPurchaseResult
         }
     }
 
