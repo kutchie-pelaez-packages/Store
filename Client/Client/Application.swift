@@ -20,7 +20,10 @@ final class Application: UIApplication, UIApplicationDelegate, LoggerProvider {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = RootViewController(store: store)
+        window?.rootViewController = RootViewController(
+            logger: logger,
+            store: store
+        )
         window?.makeKeyAndVisible()
 
         return true

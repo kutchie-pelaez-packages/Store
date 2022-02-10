@@ -1,4 +1,4 @@
 public enum StoreEvent {
     case productsInitiallyLoaded
-    case subscriptionStateInitiallySet
+    case subscriptionStatusInitiallySet
 }

@@ -17,7 +17,7 @@ final class StoreImpl: Store {
 
     // MARK: - Store
 
-    lazy var subscriptionStateSubject: ValueSubject<SubscriptionStatus> = MutableValueSubject(.unknown)
+    lazy var subscriptionStatusSubject: ValueSubject<SubscriptionStatus> = MutableValueSubject(.unknown)
 
     var eventPublisher: ValuePublisher<StoreEvent> {
         eventPassthroughSubject.eraseToAnyPublisher()
