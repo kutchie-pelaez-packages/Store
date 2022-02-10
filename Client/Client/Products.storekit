@@ -75,10 +75,37 @@
           "adHocOffers" : [
 
           ],
+          "displayPrice" : "4.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "D64920DD",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Two months subscription",
+              "displayName" : "2 Months",
+              "locale" : "en_US"
+            },
+            {
+              "description" : "Двухмесячная подписка",
+              "displayName" : "2 Месяца",
+              "locale" : "ru"
+            }
+          ],
+          "productID" : "com.kulikovia.client.store.two_months",
+          "recurringSubscriptionPeriod" : "P2M",
+          "referenceName" : "two_months",
+          "subscriptionGroupID" : "58AB3700",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
           "displayPrice" : "39.99",
           "familyShareable" : false,
           "groupNumber" : 1,
-          "internalID" : "EB61EBCA",
+          "internalID" : "1F5DD1A7",
           "introductoryOffer" : null,
           "localizations" : [
             {
