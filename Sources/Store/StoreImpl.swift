@@ -244,7 +244,8 @@ final class StoreImpl: Store {
     }
 
     func restore() async throws {
-        fatalError()
+        try await AppStore.sync()
+        try await syncSubscriptionStatus()
     }
 
     func info(for subscription: SubscriptionProduct) -> SubscriptionInfo {
