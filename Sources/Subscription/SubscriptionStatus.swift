@@ -6,20 +6,14 @@ public enum SubscriptionStatus: CustomStringConvertible, Codable {
     public struct SubscribedInfo: Codable {
         public init(
             id: String,
-            autoRenew: AutoRenew
+            willAutoRenew: Bool
         ) {
             self.id = id
-            self.autoRenew = autoRenew
+            self.willAutoRenew = willAutoRenew
         }
 
         public let id: String
-        public let autoRenew: AutoRenew
-
-        public enum AutoRenew: Codable {
-            case enabled
-            case disabled
-            case failed
-        }
+        public let willAutoRenew: Bool
     }
 
     public struct ExpiredInfo: Codable {

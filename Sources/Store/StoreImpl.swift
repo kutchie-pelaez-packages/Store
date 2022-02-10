@@ -146,25 +146,10 @@ final class StoreImpl: Store {
                 )
 
             case .subscribed, .inBillingRetryPeriod, .inGracePeriod:
-                let autoRenew: SubscriptionStatus.SubscribedInfo.AutoRenew
-                if renewalInfo.willAutoRenew {
-                    autoRenew = .enabled
-                } else if let expirationReason = renewalInfo.expirationReason {
-                    switch expirationReason {
-                    case .autoRenewDisabled:
-                        autoRenew = .disabled
-
-                    default:
-                        autoRenew = .failed
-                    }
-                } else {
-                    autoRenew = .failed
-                }
-
                 subscriptionStatus = .subscribed(
                     SubscriptionStatus.SubscribedInfo(
                         id: renewalInfo.currentProductID,
-                        autoRenew: autoRenew
+                        willAutoRenew: renewalInfo.willAutoRenew
                     )
                 )
                 return
