@@ -7,9 +7,11 @@ import Subscription
 final class StoreImpl: Store {
     init(
         subscriptions: [SubscriptionProduct],
+        provider: StoreProvider,
         logger: Logger
     ) {
         self.subscriptions = subscriptions
+        self.provider = provider
         self.logger = logger
         setup()
     }
@@ -19,9 +21,11 @@ final class StoreImpl: Store {
     }
 
     private let subscriptions: [SubscriptionProduct]
+    private let provider: StoreProvider
     private let logger: Logger
 
     private var unfinishedTransactionsListener: Task<Void, Error>?
+    private var updatesTransactionsListener: Task<Void, Error>?
 
     @SubscriptionStatusUserDefault("subscription_status")
     private var storedSubscriptionStatus
@@ -36,11 +40,21 @@ final class StoreImpl: Store {
     // MARK: -
 
     private func setup() {
-        setupUnfinishedTransactionsListener()
+        setupTransactionsListener(
+            for: Transaction.unfinished,
+            assignTo: &unfinishedTransactionsListener
+        )
+        setupTransactionsListener(
+            for: Transaction.updates,
+            assignTo: &updatesTransactionsListener
+        )
 
         Task {
             do {
                 try await retreiveStoreProducts()
+                dispatch {
+                    self.eventPassthroughSubject.send(.subscriptionsInitiallyLoaded)
+                }
                 try await syncSubscriptionStatus()
             } catch {
                 logger.error("Failed to retreive store products", domain: .store)
@@ -48,9 +62,12 @@ final class StoreImpl: Store {
         }
     }
 
-    private func setupUnfinishedTransactionsListener() {
-        unfinishedTransactionsListener = Task.detached {
-            for await unfinishedTransaction in Transaction.unfinished {
+    private func setupTransactionsListener(
+        for transactions: Transaction.Transactions,
+        assignTo listener: inout Task<Void, Error>?
+    ) {
+        listener = Task.detached {
+            for await unfinishedTransaction in transactions {
                 do {
                     let transaction = try self.verefied(unfinishedTransaction)
                     try await self.syncSubscriptionStatus()
@@ -97,7 +114,9 @@ final class StoreImpl: Store {
 
         var subscriptionStatus: SubscriptionStatus = .notSubscribed
         defer {
-            _subscriptionStatusSubject.value = subscriptionStatus
+            dispatch {
+                self._subscriptionStatusSubject.value = subscriptionStatus
+            }
             storedSubscriptionStatus = subscriptionStatus
         }
 
@@ -246,6 +265,10 @@ final class StoreImpl: Store {
     func restore() async throws {
         try await AppStore.sync()
         try await syncSubscriptionStatus()
+    }
+
+    func manage() async throws {
+        try await AppStore.showManageSubscriptions(in: provider.windowScene)
     }
 
     func info(for subscription: SubscriptionProduct) -> SubscriptionInfo {

@@ -6,5 +6,16 @@ public protocol Store {
     var eventPublisher: ValuePublisher<StoreEvent> { get }
     func subscribe(for subscription: SubscriptionProduct) async throws
     func restore() async throws
+    func manage() async throws
     func info(for subscription: SubscriptionProduct) -> SubscriptionInfo
+}
+
+extension Store {
+    public var activeSubscriptionId: String? {
+        if case let .subscribed(subscribedInfo) = subscriptionStatusSubject.value {
+            return subscribedInfo.id
+        }
+
+        return nil
+    }
 }
