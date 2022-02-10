@@ -14,8 +14,15 @@ final class StoreImpl: Store {
         setup()
     }
 
+    deinit {
+        unfinishedTransactionsListener?.cancel()
+        unfinishedTransactionsListener = nil
+    }
+
     private let products: [StoreProduct]
     private let logger: Logger
+
+    private var unfinishedTransactionsListener: Task<Void, Error>?
 
     private let eventPassthroughSubject = ValuePassthroughSubject<StoreEvent>()
     private var storeProducts = [Product]()
@@ -24,9 +31,26 @@ final class StoreImpl: Store {
     // MARK: -
 
     private func setup() {
+        listenForUnfinishedTransaction()
         Task {
             do {
                 try await retreiveProductsFromStore()
+            }
+        }
+    }
+
+    private func listenForUnfinishedTransaction() {
+        unfinishedTransactionsListener = Task.detached {
+            for await unfinishedTransaction in Transaction.unfinished {
+                do {
+                    let transaction = try self.transaction(from: unfinishedTransaction)
+                    await transaction.finish()
+                } catch {
+                    self.logger.log(
+                        "Failed to verefy transaction for \(unfinishedTransaction) transaction",
+                        domain: .store
+                    )
+                }
             }
         }
     }
