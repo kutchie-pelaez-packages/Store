@@ -18,6 +18,7 @@ final class StoreImpl: Store {
     private let logger: Logger
 
     private let eventPassthroughSubject = ValuePassthroughSubject<StoreEvent>()
+    private var storeProducts = [Product]()
     private var productIdToInfo = [String: StoreProductInfo]()
 
     // MARK: -
@@ -47,6 +48,8 @@ final class StoreImpl: Store {
                 safeCrash("\(storeProduct.type) product type is not supported")
             }
         }
+
+        self.storeProducts = storeProducts
     }
 
     private func duration(from subscriptionPeriod: Product.SubscriptionPeriod?) -> StoreProductDuration {
@@ -75,6 +78,16 @@ final class StoreImpl: Store {
         }
     }
 
+    private func transaction<T>(from verificationResult: VerificationResult<T>) throws -> T {
+        switch verificationResult {
+        case let .verified(transaction):
+            return transaction
+
+        case .unverified:
+            throw StoreError.unverifiedTransaction
+        }
+    }
+
     // MARK: - Store
 
     lazy var subscriptionStatusSubject: ValueSubject<SubscriptionStatus> = MutableValueSubject(.unknown)
@@ -84,7 +97,27 @@ final class StoreImpl: Store {
     }
 
     func purchase(_ product: StoreProduct) async throws {
-        fatalError()
+        guard let storeProduct = storeProducts.first(where: { $0.id == product.id }) else {
+            safeCrash("Unknown product \(product.id) received")
+            throw StoreError.unknownProduct
+        }
+
+        let purchaseResult = try await storeProduct.purchase()
+
+        switch purchaseResult {
+        case let .success(verificationResult):
+            let transaction = try transaction(from: verificationResult)
+            await transaction.finish()
+
+        case .userCancelled:
+            throw StoreError.userCancelledPurchase
+
+        case .pending:
+            throw StoreError.pendingPurchase
+
+        @unknown default:
+            throw StoreError.unknown
+        }
     }
 
     func restore() async throws {

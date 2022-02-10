@@ -1,6 +1,7 @@
-public enum StoreError: Error, Equatable {
-    case purchaseCanceled
-    case purchasePending
-    case transactionUnverified
-    case unknown(String)
+public enum StoreError: Error {
+    case pendingPurchase
+    case unknown
+    case unknownProduct
+    case unverifiedTransaction
+    case userCancelledPurchase
 }
