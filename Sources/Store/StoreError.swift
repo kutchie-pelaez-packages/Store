@@ -1,6 +1,7 @@
 public enum StoreError: Error {
-    case unknownPurchaseResult
+    case pendingProduct
     case unknownProduct
+    case unknownPurchaseResult
     case unverifiedTransaction
     case userCancelledPurchase
 }

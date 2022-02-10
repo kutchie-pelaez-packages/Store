@@ -18,6 +18,7 @@ final class StoreImpl: Store {
 
     deinit {
         unfinishedTransactionsListener?.cancel()
+        updatesTransactionsListener?.cancel()
     }
 
     private let subscriptions: [SubscriptionProduct]
@@ -67,14 +68,14 @@ final class StoreImpl: Store {
         assignTo listener: inout Task<Void, Error>?
     ) {
         listener = Task.detached {
-            for await unfinishedTransaction in transactions {
+            for await transaction in transactions {
                 do {
-                    let transaction = try self.verefied(unfinishedTransaction)
+                    let transaction = try self.verefied(transaction)
                     try await self.syncSubscriptionStatus()
                     await transaction.finish()
                 } catch {
                     self.logger.error(
-                        "Failed to verefy transaction for \(unfinishedTransaction) transaction",
+                        "Failed to verefy transaction for \(transaction) transaction",
                         domain: .store
                     )
                 }
@@ -256,6 +257,7 @@ final class StoreImpl: Store {
 
         case .pending:
             logger.log("Pending \(subscription.id) subscription purchasing", domain: .store)
+            throw StoreError.pendingProduct
 
         @unknown default:
             throw StoreError.unknownPurchaseResult
