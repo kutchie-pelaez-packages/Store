@@ -40,6 +40,16 @@ let package = Package(
             dependencies: [
                 .product(name: "Yams", package: "Yams")
             ]
+        ),
+        .testTarget(
+            name: "StoreTests",
+            dependencies: [
+                .product(name: "Core", package: "Core"),
+                .product(name: "Logger", package: "Logging"),
+                .target(name: "Store"),
+                .target(name: "Subscription")
+            ],
+            path: "Tests"
         )
     ]
 )
