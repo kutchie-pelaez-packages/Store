@@ -49,7 +49,10 @@ let package = Package(
                 .target(name: "Store"),
                 .target(name: "Subscription")
             ],
-            path: "Tests"
+            path: "Tests",
+            resources: [
+                .process("Configuration.storekit")
+            ]
         )
     ]
 )
