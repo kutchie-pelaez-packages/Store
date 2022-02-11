@@ -51,7 +51,7 @@ let package = Package(
             ],
             path: "Tests",
             resources: [
-                .process("Configuration.storekit")
+                .process("Subscriptions.storekit")
             ]
         )
     ]

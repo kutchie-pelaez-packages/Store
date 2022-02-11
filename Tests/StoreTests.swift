@@ -15,7 +15,7 @@ final class StoreTests: XCTestCase {
     private let session: SKTestSession = {
         try! SKTestSession(
             contentsOf: Bundle.module.url(
-                forResource: "Configuration",
+                forResource: "Subscriptions",
                 withExtension: "storekit"
             )!
         )
@@ -24,7 +24,6 @@ final class StoreTests: XCTestCase {
     private var cancellables = [AnyCancellable]()
 
     func test1_productsShouldBeLoaded() {
-        StoreKitTest.SKTestSession.
         let expectation = expectation(description: "products loading")
 
         subject.eventPublisher
@@ -35,32 +34,7 @@ final class StoreTests: XCTestCase {
             }
             .store(in: &cancellables)
 
-        waitForExpectations(timeout: 10)
-    }
-
-    func test2_shouldShangeSatusFromNotSubscribedToSubscribed() {
-        let expectation = expectation(description: "purchase")
-
-        guard case .notSubscribed = subject.subscriptionStatusSubject.value else {
-            XCTAssert(false)
-            return
-        }
-
-        Task {
-            do {
-                try await subject.subscribe(for: TestsSubscription.week)
-                expectation.fulfill()
-            }
-        }
-
-        waitForExpectations(timeout: 0.3, handler: nil)
-
-//        XCTAssertNoThrow(try session.buyProduct(productIdentifier: TestsSubscription.week.id))
-
-        guard case .subscribed = subject.subscriptionStatusSubject.value else {
-            XCTAssert(false)
-            return
-        }
+        wait(for: [expectation], timeout: 1)
     }
 }
 

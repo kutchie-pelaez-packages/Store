@@ -1,0 +1,108 @@
+{
+  "identifier" : "AD4830DF",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+
+  ],
+  "settings" : {
+    "_askToBuyEnabled" : true
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "58AB3700",
+      "localizations" : [
+
+      ],
+      "name" : "original",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "displayPrice" : "0.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "5D1F37BB",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Weekly subscription",
+              "displayName" : "Week",
+              "locale" : "en_US"
+            },
+            {
+              "description" : "Недельная подписка",
+              "displayName" : "Неделя",
+              "locale" : "ru"
+            }
+          ],
+          "productID" : "com.kulikovia.client.store.week",
+          "recurringSubscriptionPeriod" : "P1W",
+          "referenceName" : "week",
+          "subscriptionGroupID" : "58AB3700",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "displayPrice" : "2.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "68F7AFF2",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Monthly subscription",
+              "displayName" : "Month",
+              "locale" : "en_US"
+            },
+            {
+              "description" : "Месячная подписка",
+              "displayName" : "Месяц",
+              "locale" : "ru"
+            }
+          ],
+          "productID" : "com.kulikovia.client.store.month",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "month",
+          "subscriptionGroupID" : "58AB3700",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "displayPrice" : "39.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "1F5DD1A7",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Yearly subscription",
+              "displayName" : "Year",
+              "locale" : "en_US"
+            },
+            {
+              "description" : "Годовая подписка",
+              "displayName" : "Год",
+              "locale" : "ru"
+            }
+          ],
+          "productID" : "com.kulikovia.client.store.year",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "year",
+          "subscriptionGroupID" : "58AB3700",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 1,
+    "minor" : 1
+  }
+}
