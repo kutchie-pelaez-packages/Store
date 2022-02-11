@@ -2,3 +2,6 @@ Package.resolved
 .DS_Store
 .swiftpm/
 .build/
+xcshareddata/
+xcuserdata/
+project.xcworkspace/
