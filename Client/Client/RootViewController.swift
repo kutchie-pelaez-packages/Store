@@ -102,7 +102,21 @@ final class RootViewController: ViewController {
                                             text: "Subscribed"
                                         )
                                     )
-                                )
+                                ),
+                                System.TableView.Row(
+                                    content: System.TableView.SystemContent(
+                                        title: System.TableView.SystemContent.Title(
+                                            text: "id: \(info.id)"
+                                        )
+                                    )
+                                ),
+                                System.TableView.Row(
+                                    content: System.TableView.SystemContent(
+                                        title: System.TableView.SystemContent.Title(
+                                            text: "willAutoRenew: \(info.willAutoRenew)"
+                                        )
+                                    )
+                                ),
                             ]
 
                         case .notSubscribed:
@@ -118,14 +132,25 @@ final class RootViewController: ViewController {
 
                         case let .expired(info):
                             return [
-                                System.TableView.Row(
-                                    content: System.TableView.SystemContent(
-                                        title: System.TableView.SystemContent.Title(
-                                            text: "Expired"
+                                [
+                                    System.TableView.Row(
+                                        content: System.TableView.SystemContent(
+                                            title: System.TableView.SystemContent.Title(
+                                                text: "Expired"
+                                            )
+                                        )
+                                    ),
+                                ],
+                                info.expiredSubscriptions.map { expiredSubscription in
+                                    System.TableView.Row(
+                                        content: System.TableView.SystemContent(
+                                            title: System.TableView.SystemContent.Title(
+                                                text: "id: \(expiredSubscription.id), \(expiredSubscription.reason)"
+                                            )
                                         )
                                     )
-                                )
-                            ]
+                                }
+                            ].flatMap { $0 }
                         }
                     }(),
                     header: System.TableView.SystemHeader(
