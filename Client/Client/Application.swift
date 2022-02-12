@@ -2,13 +2,13 @@ import Logger
 import Store
 import UIKit
 
-final class Application: UIApplication, UIApplicationDelegate, LoggerProvider {
+final class Application: UIApplication, UIApplicationDelegate {
     var window: UIWindow?
 
     private lazy var logger: Logger = {
         LoggerFactory().produce(
             environment: .dev,
-            provider: self
+            provider: ClientLoggerProvider()
         )
     }()
 
