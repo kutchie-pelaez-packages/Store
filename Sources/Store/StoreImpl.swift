@@ -3,13 +3,14 @@ import Core
 import Logger
 import StoreKit
 import Subscription
+import Yams
 
 final class StoreImpl: Store {
     init(
-        subscriptions: [SubscriptionProduct],
+        provider: StoreProvider,
         logger: Logger
     ) {
-        self.subscriptions = subscriptions
+        self.provider = provider
         self.logger = logger
         setup()
     }
@@ -18,7 +19,7 @@ final class StoreImpl: Store {
         updatesTransactionsListener?.cancel()
     }
 
-    private let subscriptions: [SubscriptionProduct]
+    private let provider: StoreProvider
     private let logger: Logger
 
     private var updatesTransactionsListener: Task<Void, Error>?
@@ -36,18 +37,38 @@ final class StoreImpl: Store {
     // MARK: -
 
     private func setup() {
-        setupTransactionsListener()
+        do {
+            try retreiveConfigSubscriptions()
+            setupTransactionsListener()
 
-        Task {
-            do {
+            Task {
                 try await retreiveStoreProducts()
                 dispatch {
                     self.eventPassthroughSubject.send(.subscriptionsInitiallyLoaded)
                 }
                 try await syncSubscriptionStatus()
-            } catch {
-                logger.error("Failed to retreive store products", domain: .store)
             }
+        } catch {
+            logger.error("Failed to setup store, error: \(error)", domain: .store)
+        }
+    }
+
+    private func retreiveConfigSubscriptions() throws {
+        let decoder = YAMLDecoder()
+        let configData = try Data(contentsOf: provider.subscriptionsConfigURL)
+        let configSubscriptions = try decoder.decode([SubscriptionsConfig.Subscription].self, from: configData)
+
+        configSubscriptions.forEach {
+            guard let duration = SubscriptionInfo.Duration(rawValue: $0.duration) else {
+                logger.error("Failed to get duration from \($0.duration)", domain: .store)
+                safeCrash()
+                return
+            }
+
+            subscriptionIdToInfo[$0.id] = SubscriptionInfo(
+                price: $0.price,
+                duration: duration
+            )
         }
     }
 
@@ -69,7 +90,7 @@ final class StoreImpl: Store {
     }
 
     private func retreiveStoreProducts() async throws {
-        let storeProducts = try await Product.products(for: subscriptions.map(\.id))
+        let storeProducts = try await Product.products(for: subscriptionIdToInfo.keys)
 
         for storeProduct in storeProducts {
             switch storeProduct.type {
@@ -255,7 +276,10 @@ final class StoreImpl: Store {
     }
 
     func info(for subscription: SubscriptionProduct) -> SubscriptionInfo {
-        subscriptionIdToInfo[subscription.id] ?? subscription.fallbackInfo
+        undefinedIfNil(
+            subscriptionIdToInfo[subscription.id],
+            "Failed to ger info for \(subscription.id) subscription"
+        )
     }
 }
 

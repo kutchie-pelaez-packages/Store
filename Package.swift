@@ -32,6 +32,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Core", package: "Core"),
                 .product(name: "Logger", package: "Logging"),
+                .product(name: "Yams", package: "Yams"),
                 .target(name: "Subscription")
             ]
         ),
@@ -51,7 +52,7 @@ let package = Package(
             ],
             path: "Tests",
             resources: [
-                .process("Subscriptions.storekit")
+                .process("Resources")
             ]
         )
     ]

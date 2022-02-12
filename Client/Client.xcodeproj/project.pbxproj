@@ -7,10 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2C0B101827B7C5300079A38B /* subscriptions_config.yml in Resources */ = {isa = PBXBuildFile; fileRef = 2C0B101427B7C5300079A38B /* subscriptions_config.yml */; };
+		2C0B101927B7C5300079A38B /* AppIcon.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C0B101527B7C5300079A38B /* AppIcon.xcassets */; };
+		2C0B101D27B7C57C0079A38B /* ClientStoreProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0B101C27B7C57C0079A38B /* ClientStoreProvider.swift */; };
 		2C78607927B5356900192C13 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C78607827B5356900192C13 /* main.swift */; };
 		2C9877BF27B534C500778DC5 /* Application.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9877BE27B534C500778DC5 /* Application.swift */; };
 		2C9877C327B534C500778DC5 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9877C227B534C500778DC5 /* RootViewController.swift */; };
-		2C9877C827B534C600778DC5 /* AppIcon.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C9877C727B534C600778DC5 /* AppIcon.xcassets */; };
 		2C9BC21727B5641800E549D6 /* Subscription in Frameworks */ = {isa = PBXBuildFile; productRef = 2C9BC21627B5641800E549D6 /* Subscription */; };
 		2C9D93CA27B536CA00ED0F99 /* CoreUI in Frameworks */ = {isa = PBXBuildFile; productRef = 2C9D93C927B536CA00ED0F99 /* CoreUI */; };
 		2C9D93CF27B536F000ED0F99 /* Store in Frameworks */ = {isa = PBXBuildFile; productRef = 2C9D93CE27B536F000ED0F99 /* Store */; };
@@ -19,13 +21,16 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2C0B101427B7C5300079A38B /* subscriptions_config.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = subscriptions_config.yml; sourceTree = "<group>"; };
+		2C0B101527B7C5300079A38B /* AppIcon.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = AppIcon.xcassets; sourceTree = "<group>"; };
+		2C0B101627B7C5300079A38B /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2C0B101727B7C5300079A38B /* Subscriptions.storekit */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Subscriptions.storekit; sourceTree = "<group>"; };
+		2C0B101C27B7C57C0079A38B /* ClientStoreProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientStoreProvider.swift; sourceTree = "<group>"; };
 		2C78607827B5356900192C13 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		2C9877BB27B534C500778DC5 /* Client.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Client.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C9877BE27B534C500778DC5 /* Application.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Application.swift; sourceTree = "<group>"; };
 		2C9877C227B534C500778DC5 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
-		2C9877C727B534C600778DC5 /* AppIcon.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = AppIcon.xcassets; sourceTree = "<group>"; };
 		2C9D93CC27B536D900ED0F99 /* Store */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Store; path = ..; sourceTree = "<group>"; };
-		2C9D93D527B5386900ED0F99 /* Subscriptions.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Subscriptions.storekit; sourceTree = "<group>"; };
 		2C9D93D627B53BF300ED0F99 /* ClientSubscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientSubscription.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -44,6 +49,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2C0B101327B7C5300079A38B /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				2C0B101527B7C5300079A38B /* AppIcon.xcassets */,
+				2C0B101627B7C5300079A38B /* Info.plist */,
+				2C0B101427B7C5300079A38B /* subscriptions_config.yml */,
+				2C0B101727B7C5300079A38B /* Subscriptions.storekit */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		2C9877B227B534C500778DC5 = {
 			isa = PBXGroup;
 			children = (
@@ -65,11 +81,11 @@
 		2C9877BD27B534C500778DC5 /* Client */ = {
 			isa = PBXGroup;
 			children = (
-				2C9877C727B534C600778DC5 /* AppIcon.xcassets */,
+				2C0B101327B7C5300079A38B /* Resources */,
 				2C9877BE27B534C500778DC5 /* Application.swift */,
+				2C0B101C27B7C57C0079A38B /* ClientStoreProvider.swift */,
 				2C9D93D627B53BF300ED0F99 /* ClientSubscription.swift */,
 				2C78607827B5356900192C13 /* main.swift */,
-				2C9D93D527B5386900ED0F99 /* Subscriptions.storekit */,
 				2C9877C227B534C500778DC5 /* RootViewController.swift */,
 			);
 			path = Client;
@@ -158,7 +174,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2C9877C827B534C600778DC5 /* AppIcon.xcassets in Resources */,
+				2C0B101927B7C5300079A38B /* AppIcon.xcassets in Resources */,
+				2C0B101827B7C5300079A38B /* subscriptions_config.yml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -171,6 +188,7 @@
 			files = (
 				2C9877C327B534C500778DC5 /* RootViewController.swift in Sources */,
 				2C9877BF27B534C500778DC5 /* Application.swift in Sources */,
+				2C0B101D27B7C57C0079A38B /* ClientStoreProvider.swift in Sources */,
 				2C78607927B5356900192C13 /* main.swift in Sources */,
 				2C9D93D727B53BF300ED0F99 /* ClientSubscription.swift in Sources */,
 			);
@@ -303,7 +321,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = H59R5P45N2;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Client/Info.plist;
+				INFOPLIST_FILE = Client/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -331,7 +349,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = H59R5P45N2;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Client/Info.plist;
+				INFOPLIST_FILE = Client/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;

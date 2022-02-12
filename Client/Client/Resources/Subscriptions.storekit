@@ -7,7 +7,7 @@
 
   ],
   "settings" : {
-    "_askToBuyEnabled" : true
+    "_askToBuyEnabled" : false
   },
   "subscriptionGroups" : [
     {
@@ -38,7 +38,7 @@
               "locale" : "ru"
             }
           ],
-          "productID" : "week",
+          "productID" : "com.kulikovia.client.store.week",
           "recurringSubscriptionPeriod" : "P1W",
           "referenceName" : "week",
           "subscriptionGroupID" : "58AB3700",
@@ -65,7 +65,7 @@
               "locale" : "ru"
             }
           ],
-          "productID" : "month",
+          "productID" : "com.kulikovia.client.store.month",
           "recurringSubscriptionPeriod" : "P1M",
           "referenceName" : "month",
           "subscriptionGroupID" : "58AB3700",
@@ -92,7 +92,7 @@
               "locale" : "ru"
             }
           ],
-          "productID" : "year",
+          "productID" : "com.kulikovia.client.store.year",
           "recurringSubscriptionPeriod" : "P1Y",
           "referenceName" : "year",
           "subscriptionGroupID" : "58AB3700",

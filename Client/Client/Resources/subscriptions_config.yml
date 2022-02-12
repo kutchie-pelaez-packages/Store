@@ -1,0 +1,12 @@
+- id: com.kulikovia.client.store.week
+  price: 0.99
+  duration: week
+
+- id: com.kulikovia.client.store.month
+  price: 2.99
+  duration: month
+
+- id: com.kulikovia.client.store.year
+  price: 39.99
+  duration: year
+

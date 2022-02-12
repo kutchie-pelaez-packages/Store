@@ -38,7 +38,7 @@
               "locale" : "ru"
             }
           ],
-          "productID" : "com.kulikovia.client.store.week",
+          "productID" : "store.tests.week",
           "recurringSubscriptionPeriod" : "P1W",
           "referenceName" : "week",
           "subscriptionGroupID" : "58AB3700",
@@ -65,7 +65,7 @@
               "locale" : "ru"
             }
           ],
-          "productID" : "com.kulikovia.client.store.month",
+          "productID" : "store.tests.month",
           "recurringSubscriptionPeriod" : "P1M",
           "referenceName" : "month",
           "subscriptionGroupID" : "58AB3700",
@@ -92,7 +92,7 @@
               "locale" : "ru"
             }
           ],
-          "productID" : "com.kulikovia.client.store.year",
+          "productID" : "store.tests.year",
           "recurringSubscriptionPeriod" : "P1Y",
           "referenceName" : "year",
           "subscriptionGroupID" : "58AB3700",

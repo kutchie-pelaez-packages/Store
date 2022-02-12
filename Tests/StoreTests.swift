@@ -7,7 +7,7 @@ import XCTest
 final class StoreTests: XCTestCase {
     private lazy var subject: Store = {
         StoreFactory().produce(
-            subscriptions: TestsSubscription.allCases,
+            provider: TestsStoreProvider(),
             logger: LoggerMock()
         )
     }()

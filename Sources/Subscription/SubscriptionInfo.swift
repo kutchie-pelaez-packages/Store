@@ -1,7 +1,7 @@
 import Foundation
 
 public struct SubscriptionInfo {
-    public enum Duration {
+    public enum Duration: String {
         case week
         case month
         case year

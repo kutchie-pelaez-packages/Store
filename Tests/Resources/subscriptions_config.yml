@@ -1,0 +1,12 @@
+- id: store.tests.week
+  price: 0.99
+  duration: week
+
+- id: store.tests.month
+  price: 2.99
+  duration: month
+
+- id: store.tests.year
+  price: 39.99
+  duration: year
+
