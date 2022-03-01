@@ -55,7 +55,7 @@ final class RootViewController: ViewController {
 
         store.subscriptionStatusSubject
             .sink { [weak self] status in
-                self?.logger.log("New status: \(status)", domain: .storeClient)
+                self?.logger.log("Received new status: \(status)", domain: .storeClient)
                 self?.syncState()
             }
             .store(in: &cancellables)

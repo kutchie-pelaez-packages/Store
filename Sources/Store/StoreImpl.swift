@@ -81,7 +81,7 @@ final class StoreImpl: Store {
                     await transaction.finish()
                 } catch {
                     self.logger.error(
-                        "Failed to verefy transaction for \(result) transaction",
+                        "Failed to verify \(result) transaction",
                         domain: .store
                     )
                 }
@@ -103,7 +103,7 @@ final class StoreImpl: Store {
                 )
 
             default:
-                logger.log("\(storeProduct.type) product type is not supported", domain: .store)
+                logger.log("Failed to make subscription info for \(storeProduct.id), error: \(storeProduct.type) product type is not supported", domain: .store)
                 safeCrash()
             }
         }
@@ -198,7 +198,7 @@ final class StoreImpl: Store {
 
     private func duration(from subscriptionPeriod: Product.SubscriptionPeriod?) -> SubscriptionInfo.Duration {
         guard let subscriptionPeriod = subscriptionPeriod else {
-            logger.error("Subscription period is nil", domain: .store)
+            logger.error("Failed to get duration from subscription period, error: Subscription period is nil", domain: .store)
             crash()
         }
 
@@ -207,7 +207,7 @@ final class StoreImpl: Store {
             if subscriptionPeriod.value == 1 {
                 return .week
             } else {
-                logger.error("\(subscriptionPeriod.value) weeks duration is not supported", domain: .store)
+                logger.error("Failed to get duration from subscription period, error: Multiple weeks duration is not supported", domain: .store)
                 crash()
             }
 
@@ -215,7 +215,7 @@ final class StoreImpl: Store {
             if subscriptionPeriod.value == 1 {
                 return .month
             } else {
-                logger.error("\(subscriptionPeriod.value) months duration is not supported", domain: .store)
+                logger.error("Failed to get duration from subscription period, error: Multiple months duration is not supported", domain: .store)
                 crash()
             }
 
@@ -223,12 +223,12 @@ final class StoreImpl: Store {
             if subscriptionPeriod.value == 1 {
                 return .year
             } else {
-                logger.error("\(subscriptionPeriod.value) years duration is not supported", domain: .store)
+                logger.error("Failed to get duration from subscription period, error: Multiple years duration is not supported", domain: .store)
                 crash()
             }
 
         default:
-            logger.error("\(subscriptionPeriod.unit) unit is not supported", domain: .store)
+            logger.error("Failed to get duration from subscription period, error: \(subscriptionPeriod.unit) duration unit is not supported", domain: .store)
             crash()
         }
     }
@@ -245,7 +245,7 @@ final class StoreImpl: Store {
 
     func subscribe(for subscription: SubscriptionProduct) async throws {
         guard let storeProduct = storeProducts.first(where: { $0.id == subscription.id }) else {
-            logger.log("Unknown subscription \(subscription.id) received", domain: .store)
+            logger.log("Failed to subscribe for \(subscription.id) subscription, error: Unknown subscription id received", domain: .store)
             safeCrash()
             throw StoreError.unknownProduct
         }
@@ -262,7 +262,7 @@ final class StoreImpl: Store {
             throw StoreError.userCancelledPurchase
 
         case .pending:
-            logger.log("Pending \(subscription.id) subscription purchasing", domain: .store)
+            logger.log("Received pernding purchase result for \(subscription.id) subscription", domain: .store)
             throw StoreError.pendingProduct
 
         @unknown default:
