@@ -39,6 +39,7 @@ let package = Package(
         .target(
             name: "Subscription",
             dependencies: [
+                .product(name: "Core", package: "Core"),
                 .product(name: "Yams", package: "Yams")
             ]
         ),

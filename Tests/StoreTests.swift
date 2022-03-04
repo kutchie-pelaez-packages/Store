@@ -39,7 +39,5 @@ final class StoreTests: XCTestCase {
 }
 
 private struct LoggerMock: Logger {
-    func log(_ entry: LogEntry) {  }
-    func error(_ entry: LogEntry) { }
-    func warning(_ entry: LogEntry) { }
+    func log(_ entry: LogEntry, to target: LogTarget) { }
 }
