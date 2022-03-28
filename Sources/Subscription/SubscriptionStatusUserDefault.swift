@@ -29,7 +29,7 @@ public struct SubscriptionStatusUserDefault {
             }
         } set {
             do {
-                let data = try encoder.encode(newValue).utf8Data
+                let data = try encoder.encode(newValue).data
                 subscriptionStatus = data
             } catch {
                 safeCrash()
